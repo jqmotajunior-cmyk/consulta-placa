@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Placa</title>  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .container {
+      background: white;
+      color: #333;
+      padding: 40px;
+      border-radius: 15px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #2a5298;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1e3c72;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f4f4f4;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .erro {
+      color: red;
+      text-align: center;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+    }
+
+  </style></head><body>  <div class="container">
+    <h1>🚗 Consulta de Placa</h1><input type="text" id="placa" placeholder="Ex: ABC1234">
+<button onclick="consultar()">Consultar</button>
+
+<div id="resultado"></div>
+
+  </div>  <script>
+    async function consultar() {
+      const placa = document.getElementById('placa').value;
+      const resultado = document.getElementById('resultado');
+
+      if (!placa) {
+        resultado.innerHTML = "<p class='erro'>Digite uma placa!</p>";
+        return;
+      }
+
+      resultado.innerHTML = "<p class='loading'>Consultando...</p>";
+
+      try {
+        const response = await fetch(`http://localhost:3000/placa/${placa}`);
+        const data = await response.json();
+
+        if (data.erro) {
+          resultado.innerHTML = `<p class="erro">${data.erro}</p>`;
+        } else {
+          resultado.innerHTML = `
+            <p><strong>Placa:</strong> ${data.placa || '-'}</p>
+            <p><strong>Modelo:</strong> ${data.modelo || '-'}</p>
+            <p><strong>Marca:</strong> ${data.marca || '-'}</p>
+            <p><strong>Ano:</strong> ${data.ano || '-'}</p>
+            <p><strong>Cor:</strong> ${data.cor || '-'}</p>
+          `;
+        }
+
+      } catch (error) {
+        resultado.innerHTML = "<p class='erro'>Erro ao conectar com servidor</p>";
+      }
+    }
+  </script></body>
+</html>
